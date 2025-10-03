@@ -1,10 +1,7 @@
 --- *mini.clue* Show next key clues
---- *MiniClue*
 ---
 --- MIT License Copyright (c) 2023 Evgeni Chasnovski
----
---- ==============================================================================
----
+
 --- Features:
 --- - Implement custom key query process to reach target key combination:
 ---     - Starts after customizable opt-in triggers (mode + keys).
@@ -108,7 +105,7 @@
 ---
 --- # Comparisons ~
 ---
---- - 'folke/which-key.nvim':
+--- - [folke/which-key.nvim](https://github.com/folke/which-key.nvim):
 ---     - Both have the same main goal: show available next keys along with
 ---       their customizable descriptions.
 ---     - Has different UI and content layout.
@@ -116,7 +113,7 @@
 ---       doesn't have this by design (to clearly separate two different tasks).
 ---     - Doesn't allow creating submodes, while this module does (via `postkeys`).
 ---
---- - 'anuvyklack/hydra.nvim':
+--- - [anuvyklack/hydra.nvim](https://github.com/anuvyklack/hydra.nvim):
 ---     - Both allow creating submodes: state which starts at certain key
 ---       combination; treats some keys differently; ends after `<Esc>`.
 ---     - Doesn't show information about available next keys (outside of
@@ -124,15 +121,15 @@
 ---
 --- # Highlight groups ~
 ---
---- * `MiniClueBorder` - window border.
---- * `MiniClueDescGroup` - group description in clue window.
---- * `MiniClueDescSingle` - single target description in clue window.
---- * `MiniClueNextKey` - next key label in clue window.
---- * `MiniClueNextKeyWithPostkeys` - next key label with postkeys in clue window.
---- * `MiniClueSeparator` - separator in clue window.
---- * `MiniClueTitle` - window title.
+--- - `MiniClueBorder` - window border.
+--- - `MiniClueDescGroup` - group description in clue window.
+--- - `MiniClueDescSingle` - single target description in clue window.
+--- - `MiniClueNextKey` - next key label in clue window.
+--- - `MiniClueNextKeyWithPostkeys` - next key label with postkeys in clue window.
+--- - `MiniClueSeparator` - separator in clue window.
+--- - `MiniClueTitle` - window title.
 ---
---- To change any highlight group, modify it directly with |:highlight|.
+--- To change any highlight group, set it directly with |nvim_set_hl()|.
 ---
 --- # Disabling ~
 ---
@@ -141,10 +138,9 @@
 --- of different scenarios and customization intentions, writing exact rules
 --- for disabling module's functionality is left to user. See
 --- |mini.nvim-disabling-recipes| for common recipes.
+---@tag MiniClue
 
---- # Key query process ~
----
---- ## General info ~
+--- # General info ~
 ---
 --- This module implements custom key query process imitating a usual built-in
 --- mechanism of user pressing keys in order to execute a mapping. General idea
@@ -166,7 +162,7 @@
 --- mode but works in all other main modes: Visual, Insert, Operator-pending
 --- (with caveats; no foolproof guarantees), Command-line, Terminal.
 ---
---- ## Lifecycle ~
+--- # Lifecycle ~
 ---
 --- - Key query process starts when user types a trigger: certain keys in certain
 ---   mode. Those keys are put into key query as a single user input. All possible
@@ -208,7 +204,7 @@
 ---
 ---         - Otherwise wait for the new user key press.
 ---
---- ## Clue window ~
+--- # Clue window ~
 ---
 --- After initiating key query process and after each key press, a timer is
 --- started to show a clue window: floating window with information about
@@ -353,8 +349,8 @@
 ---
 ---   au FileType special_ft lua MiniClue.ensure_buf_triggers()
 --- <
----                                                     *MiniClue-examples-submodes*
 --- # Submodes ~
+--- *MiniClue-examples-submodes*
 ---
 --- Submode is a state initiated after pressing certain key combination ("prefix")
 --- during which some keys are interpreted differently.
@@ -510,9 +506,7 @@ MiniClue.setup = function(config)
 end
 
 --stylua: ignore
---- Module config
----
---- Default values:
+--- Defaults ~
 ---@eval return MiniDoc.afterlines_to_code(MiniDoc.current.eval_section)
 ---@text # General info ~
 ---
