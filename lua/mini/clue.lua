@@ -604,11 +604,12 @@ MiniClue.config = {
 }
 --minidoc_afterlines_end
 
---- Enable triggers in all listed buffers
+--- Enable triggers in all listed and some special buffers
 MiniClue.enable_all_triggers = function()
   for _, buf_id in ipairs(vim.api.nvim_list_bufs()) do
-    -- Map only inside valid listed buffers
-    if vim.fn.buflisted(buf_id) == 1 then H.map_buf_triggers(buf_id) end
+    -- Map only inside valid listed buffers and ones with special filetypes
+    local is_special = H.ft_to_enable[vim.bo[buf_id].filetype]
+    if vim.fn.buflisted(buf_id) == 1 or is_special then H.map_buf_triggers(buf_id) end
   end
 end
 
@@ -1180,6 +1181,11 @@ H.keys = {
   ctrl_u = vim.api.nvim_replace_termcodes('<C-u>', true, true, true),
 }
 
+-- Special filetypes for which to enable triggers. These are common interactive
+-- not listed filetypes. NOTE: no 'minifiles' as `'` trigger conflicts with its
+-- local `'`. Plus it pollutes `g?` content.
+H.ft_to_enable = { help = true, git = true }
+
 -- Timers
 H.timers = {
   getcharstr = vim.loop.new_timer(),
@@ -1253,10 +1259,7 @@ H.create_autocommands = function()
   -- - Respect `LspAttach` as it is a common source of buffer-local mappings
   local events = { 'BufAdd', 'LspAttach' }
   au(events, '*', ensure_triggers, 'Ensure buffer-local trigger keymaps')
-  -- - Respect common interactive not listed filetypes. NOTE: no 'minifiles' as
-  --   `'` trigger conflicts with its local `'`. Plus it pollutes `g?` content.
-  local special_ft = { 'help', 'git' }
-  au('Filetype', special_ft, ensure_triggers, 'Ensure buffer-local trigger keymaps')
+  au('Filetype', vim.tbl_keys(H.ft_to_enable), ensure_triggers, 'Ensure buffer-local trigger keymaps')
 
   -- Disable all triggers (current and future) when recording macro as they
   -- interfere with what is actually recorded
