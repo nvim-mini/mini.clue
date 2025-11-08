@@ -1679,12 +1679,16 @@ H.window_get_config = function()
   local max_height = vim.o.lines - vim.o.cmdheight - (has_tabline and 1 or 0) - (has_statusline and 1 or 0) - 2
   max_height = math.max(max_height, 1)
 
+  local keys = H.query_to_keys(H.state.query)
+  local query_clue = (H.state.clues[keys] or {}).desc or ''
+  local title = (#H.state.query <= 1 or query_clue == '') and H.keytrans(keys) or query_clue
+
   local buf_id = H.state.buf_id
   local cur_config_fields = {
     row = vim.o.lines - vim.o.cmdheight - (has_statusline and 1 or 0),
     col = vim.o.columns,
     height = math.min(vim.api.nvim_buf_line_count(buf_id), max_height),
-    title = ' ' .. H.keytrans(H.query_to_keys(H.state.query)) .. ' ',
+    title = ' ' .. title .. ' ',
     border = (vim.fn.exists('+winborder') == 1 and vim.o.winborder ~= '') and vim.o.winborder or 'single',
   }
   local user_config = H.expand_callable(H.get_config().window.config, buf_id) or {}
