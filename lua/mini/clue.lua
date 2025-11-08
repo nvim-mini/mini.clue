@@ -1184,7 +1184,7 @@ H.keys = {
 -- Special filetypes for which to enable triggers. These are common interactive
 -- not listed filetypes. NOTE: no 'minifiles' as `'` trigger conflicts with its
 -- local `'`. Plus it pollutes `g?` content.
-H.ft_to_enable = { help = true, git = true }
+H.ft_to_enable = { help = true, git = true, ministarter = true }
 
 -- Timers
 H.timers = {
@@ -1338,7 +1338,11 @@ H.map_trigger = function(buf_id, trigger)
 
   -- Compute mapping RHS
   trigger.keys = H.replace_termcodes(trigger.keys)
-  local keys_trans = H.keytrans(trigger.keys)
+  local lhs = H.keytrans(trigger.keys)
+
+  local is_ministarter_map = vim.bo[buf_id].filetype == 'ministarter'
+    and vim.api.nvim_buf_call(buf_id, function() return vim.fn.maparg(lhs, trigger.mode) ~= '' end)
+  if is_ministarter_map then return end
 
   local rhs = function()
     -- Don't act if for some reason entered the same trigger during state exec
@@ -1362,11 +1366,11 @@ H.map_trigger = function(buf_id, trigger)
 
   -- Use buffer-local mappings and `nowait` to make it a primary source of
   -- keymap execution
-  local desc = string.format('Query keys after "%s"', keys_trans)
+  local desc = string.format('Query keys after "%s"', lhs)
   local opts = { buffer = buf_id, nowait = true, desc = desc }
 
   -- Create mapping. Use translated variant to make it work with <F*> keys.
-  vim.keymap.set(trigger.mode, keys_trans, rhs, opts)
+  vim.keymap.set(trigger.mode, lhs, rhs, opts)
 end
 
 H.unmap_trigger = function(buf_id, trigger)
