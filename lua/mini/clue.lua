@@ -1689,7 +1689,7 @@ H.window_get_config = function()
     col = vim.o.columns,
     height = math.min(vim.api.nvim_buf_line_count(buf_id), max_height),
     title = ' ' .. title .. ' ',
-    border = (vim.fn.exists('+winborder') == 1 and vim.o.winborder ~= '') and vim.o.winborder or 'single',
+    border = (vim.fn.exists('+winborder') == 0 or vim.o.winborder == '') and 'single' or nil,
   }
   local user_config = H.expand_callable(H.get_config().window.config, buf_id) or {}
   local res = vim.tbl_deep_extend('force', H.default_win_config, cur_config_fields, user_config)
