@@ -1225,7 +1225,9 @@ H.apply_config = function(config)
     if register == nil then return end
     MiniClue.disable_all_triggers()
     vim.schedule(function() MiniClue.enable_all_triggers() end)
-    pcall(vim.api.nvim_feedkeys, vim.v.count1 .. key .. register, 'nx', false)
+    -- NOTE: Use `t` flag for "Handle as if typed" for better integration with
+    -- other modules/plugins (like 'mini.jump').
+    pcall(vim.api.nvim_feedkeys, vim.v.count1 .. key .. register, 'nt', false)
   end
 
   local macro_keymap_opts = { nowait = true, desc = "Execute macro without 'mini.clue' triggers" }
