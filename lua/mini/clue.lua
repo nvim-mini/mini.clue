@@ -1710,8 +1710,8 @@ H.window_get_config = function()
   end
 
   -- Ensure proper config
+  res.width = math.min(math.max(res.width, 1), vim.o.columns - 2)
   if type(res.title) == 'string' then res.title = H.fit_to_width(res.title, res.width) end
-  res.width = math.min(math.max(res.width, 1), vim.o.columns)
 
   return res
 end
