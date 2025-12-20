@@ -365,7 +365,8 @@
 ---   this submode, pressing its prefix will be automatically emulated (leading
 ---   back to being inside submode).
 ---
---- - Register submode prefix (or some of its starting part) as trigger.
+--- - Register submode prefix (or some of its starting part) as trigger. Do not
+---   register "overlapping" triggers, like `<Leader>` and `<Leader>m`.
 ---
 --- ## Submode examples ~
 ---
@@ -391,10 +392,14 @@
 ---
 ---   require('mini.clue').setup({
 ---     triggers = {
----       { mode = 'n', keys = '<Leader>m' },
----       { mode = 'x', keys = '<Leader>m' },
+---       -- This can also set up directly `<Leader>m` as a trigger, but make
+---       -- sure to not also use `<Leader>`, as they would "overlap"
+---       { mode = 'n', keys = '<Leader>' },
+---       { mode = 'x', keys = '<Leader>' },
 ---     },
 ---     clues = {
+---       { mode = 'n', keys = '<Leader>m', desc = '+Move' },
+---
 ---       { mode = 'n', keys = '<Leader>mh', postkeys = '<Leader>m' },
 ---       { mode = 'n', keys = '<Leader>mj', postkeys = '<Leader>m' },
 ---       { mode = 'n', keys = '<Leader>mk', postkeys = '<Leader>m' },
