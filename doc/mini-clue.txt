@@ -583,7 +583,7 @@ either of them.
 ------------------------------------------------------------------------------
                                                 *MiniClue.enable_all_triggers()*
                         `MiniClue.enable_all_triggers`()
-Enable triggers in all listed and some special buffers
+Enable triggers in loaded listed and some special buffers
 
 ------------------------------------------------------------------------------
                                                 *MiniClue.enable_buf_triggers()*
@@ -596,7 +596,7 @@ Parameters ~
 ------------------------------------------------------------------------------
                                                *MiniClue.disable_all_triggers()*
                        `MiniClue.disable_all_triggers`()
-Disable triggers in all buffers
+Disable triggers in loaded buffers
 
 ------------------------------------------------------------------------------
                                                *MiniClue.disable_buf_triggers()*

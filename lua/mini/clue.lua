@@ -597,9 +597,10 @@ MiniClue.config = {
 }
 --minidoc_afterlines_end
 
---- Enable triggers in all listed and some special buffers
+--- Enable triggers in loaded listed and some special buffers
 MiniClue.enable_all_triggers = function()
-  for _, buf_id in ipairs(vim.api.nvim_list_bufs()) do
+  local loaded_bufs = vim.tbl_filter(vim.api.nvim_buf_is_loaded, vim.api.nvim_list_bufs())
+  for _, buf_id in ipairs(loaded_bufs) do
     -- Map only inside valid listed buffers and ones with special filetypes
     local is_special = H.ft_to_enable[vim.bo[buf_id].filetype]
     if vim.fn.buflisted(buf_id) == 1 or is_special then H.map_buf_triggers(buf_id) end
@@ -615,9 +616,10 @@ MiniClue.enable_buf_triggers = function(buf_id)
   H.map_buf_triggers(buf_id)
 end
 
---- Disable triggers in all buffers
+--- Disable triggers in loaded buffers
 MiniClue.disable_all_triggers = function()
-  for _, buf_id in ipairs(vim.api.nvim_list_bufs()) do
+  local loaded_bufs = vim.tbl_filter(vim.api.nvim_buf_is_loaded, vim.api.nvim_list_bufs())
+  for _, buf_id in ipairs(loaded_bufs) do
     H.unmap_buf_triggers(buf_id)
   end
 end
