@@ -1232,13 +1232,20 @@ H.create_autocommands = function()
   -- Ensure buffer-local mappings for triggers are the latest ones to fully
   -- utilize `<nowait>`. Use `vim.schedule_wrap` to allow other events to
   -- create `vim.b.miniclue_config` and `vim.b.miniclue_disable`.
-  local ensure_triggers = vim.schedule_wrap(function(data)
-    if not H.is_valid_buf(data.buf) then return end
-    MiniClue.ensure_buf_triggers(data.buf)
+  -- Check for listed buffer in `BufWinEnter` (instead of using `BufAdd`) to
+  -- delay acting until buffer is loaded (otherwise buffer-local options can be
+  -- prematurely "finalized"). Process it at most once for performance.
+  local did_ensure = {}
+  local ensure_triggers = vim.schedule_wrap(function(ev)
+    if not H.is_valid_buf(ev.buf) then return end
+    local skip_triggers = ev.event == 'BufWinEnter' and (did_ensure[ev.buf] or vim.fn.buflisted(ev.buf) ~= 1)
+    did_ensure[ev.buf] = true
+    if skip_triggers then return end
+    MiniClue.ensure_buf_triggers(ev.buf)
   end)
   -- - Respect `LspAttach` as it is a common source of buffer-local mappings
-  local events = { 'BufAdd', 'LspAttach' }
-  au(events, '*', ensure_triggers, 'Ensure buffer-local trigger keymaps')
+  au({ 'BufWinEnter', 'LspAttach' }, '*', ensure_triggers, 'Ensure buffer-local trigger keymaps')
+  au('BufUnload', '*', function(ev) did_ensure[ev.buf] = nil end, 'Track buffer-local trigger keymaps')
   au('Filetype', vim.tbl_keys(H.ft_to_enable), ensure_triggers, 'Ensure buffer-local trigger keymaps')
 
   -- Disable all triggers (current and future) when recording macro as they
