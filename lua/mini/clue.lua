@@ -2014,7 +2014,9 @@ end
 H.redraw_scheduled = vim.schedule_wrap(function() vim.cmd('redraw') end)
 
 H.getcharstr = function()
-  -- Ensure redraws still happen
+  -- Ensure redraws still happen. This is needed to not block "interactive"
+  -- behavior (smooth scrolling) and not immediate submodes (scheduled DAP).
+  -- TODO: Use "do not block redraw" `getcharstr()` option if it ever happens
   H.timers.getcharstr:start(0, 50, H.redraw_scheduled)
   local ok, char = pcall(vim.fn.getcharstr)
   H.timers.getcharstr:stop()
