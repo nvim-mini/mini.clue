@@ -1719,7 +1719,8 @@ end
 -- Buffer ---------------------------------------------------------------------
 H.buffer_update = function()
   local buf_id = H.state.buf_id
-  if not H.is_valid_buf(buf_id) then
+  if not H.is_loaded_buf(buf_id) then
+    pcall(vim.api.nvim_buf_delete, buf_id, { force = true })
     buf_id = vim.api.nvim_create_buf(false, true)
     H.set_buf_name(buf_id, 'content')
   end
@@ -2007,6 +2008,8 @@ H.get_default_register = function()
 end
 
 H.is_valid_buf = function(buf_id) return type(buf_id) == 'number' and vim.api.nvim_buf_is_valid(buf_id) end
+
+H.is_loaded_buf = function(buf_id) return type(buf_id) == 'number' and vim.api.nvim_buf_is_loaded(buf_id) end
 
 H.is_valid_win = function(win_id) return type(win_id) == 'number' and vim.api.nvim_win_is_valid(win_id) end
 
